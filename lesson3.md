@@ -65,44 +65,30 @@ while the **_Token op_** stores the operations. Ex: _{TokenType::PLUS, "+:}_
 
 ```cpp
   struct AST { virtual ~AST() = default; };
-  
-  struct NumberNode : AST { // a number literal
-  
-  double value;
-  
-  NumberNode(double v) : value(v) {}
-  
-  };
-  
-  struct BinOpNode : AST { // a binary operation like +, -, \*, /
-  
-  AST\* left;
-  
-  Token op;
-  
-  AST\* right;
-  
-  BinOpNode(AST\* l, Token o, AST\* r) : left(l), op(o), right(r) {}
-  
-  };
-  
-  struct VarAssignNode : AST { // assignment like x = 5
-  
-  std::string name;
-  
-  AST\* value;
-  
-  VarAssignNode(std::string n, AST\* v) : name(n), value(v) {}
-  
-  };
-  
-  struct VarAccessNode : AST { // using a variable
-  
-  std::string name;
-  
-  VarAccessNode(std::string n) : name(n) {}
-  
-  };
+
+struct NumberNode : AST {        // a number literal
+    double value;
+    NumberNode(double v) : value(v) {}
+};
+
+struct BinOpNode : AST {         // a binary operation like +, -, *, /
+    AST* left;
+    Token op;
+    AST* right;
+    BinOpNode(AST* l, Token o, AST* r) : left(l), op(o), right(r) {}
+};
+
+struct VarAssignNode : AST {     // assignment like x = 5
+    std::string name;
+    AST* value;
+    VarAssignNode(std::string n, AST* v) : name(n), value(v) {}
+};
+
+struct VarAccessNode : AST {     // using a variable
+    std::string name;
+    VarAccessNode(std::string n) : name(n) {}
+};
+
 ```
 
 _Reminder: as the interpreter is being built the methods of the classes will be subjected to modification._  
@@ -114,29 +100,18 @@ Once we got the token that the lexer produced, it will be passed onto the parser
 
 ```cpp
     class Parser {
-    
       Lexer& lexer;
-    
       Token currentToken;
     
     public:
-    
       Parser(Lexer& l) : lexer(l) {
-    
         currentToken = lexer.getNextToken(); // start with first token
-    
       }
-    
       AST* parse();
-      
       AST* expr();
-      
       AST* term();
-      
       AST* factor();
-      
       void eat(TokenType type);
-
 };
 ```
 
@@ -213,4 +188,123 @@ __factor()__ method calls on the eat() method then returns a node type depending
         return node;
     }
   }
+```
+
+## Full Parser and AST Code
+
+```cpp
+  //Lesson 3
+  
+  //AST is the base clss for all the nodes
+  // Operations
+  // Numbers
+  // Variables
+  // Assignments
+  struct AST { 
+      virtual ~AST() = default; 
+  };
+  
+  //Children of AST
+  struct NumberNode : AST {        // a number literal
+      double value;
+      NumberNode(double v) : value(v) {}
+  };
+  
+  struct BinOpNode : AST {         // a binary operation like +, -, *, /
+      AST* left;
+      Token op;
+      AST* right;
+      BinOpNode(AST* l, Token o, AST* r) : left(l), op(o), right(r) {}
+  };
+  
+  struct VarAssignNode : AST {     // assignment like x = 5
+      std::string name;
+      AST* value;
+      VarAssignNode(std::string n, AST* v) : name(n), value(v) {}
+  };
+  
+  struct VarAccessNode : AST {     // using a variable
+      std::string name;
+      VarAccessNode(std::string n) : name(n) {}
+  };
+  
+  struct PrintNode : AST{
+      AST * expr;
+      PrintNode(AST* e) : expr(e) {}
+  };
+  
+  
+  class Parser {
+      Lexer& lexer;
+      Token currentToken;
+  
+  public:
+      Parser(Lexer& l) : lexer(l) {
+          currentToken = lexer.getNextToken(); // start with first token
+      }
+  
+      AST* parse();
+      AST* expr();
+      AST* term();
+      AST* factor();
+      void eat(TokenType type);
+  
+      AST* statement();
+  
+  };
+  
+  void Parser::eat(TokenType type) {
+      std::cout << "EAT: " << tokenNames(currentToken.type)  << " -> " << currentToken.value << "\n";
+  
+      if (currentToken.type == type){
+          currentToken = lexer.getNextToken(); // move to next token
+          std::cout << "currentToken(updated): " << "{" << tokenNames(currentToken.type) << ", " << currentToken.value << "}\n"; 
+      }
+      else
+          throw std::runtime_error("Unexpected token");
+  }
+  
+  AST* Parser::factor() {
+  Token t = currentToken;
+  if (t.type == TokenType::NUMBER) {
+      eat(TokenType::NUMBER);
+      return new NumberNode(std::stod(t.value));
+  } else if (t.type == TokenType::IDENTIFIER) {
+      eat(TokenType::IDENTIFIER);
+      return new VarAccessNode(t.value);
+  } else if (t.type == TokenType::LPAREN) {
+      eat(TokenType::LPAREN);
+      AST* node = expr();        // evaluate inside parentheses
+      eat(TokenType::RPAREN);
+      return node;
+  }
+  throw std::runtime_error("Invalid factor");
+  }
+  
+  AST* Parser::term() {
+      AST* node = factor();
+      while (currentToken.type == TokenType::STAR || currentToken.type == TokenType::SLASH) {
+          Token op = currentToken;
+          if (op.type == TokenType::STAR) eat(TokenType::STAR);
+          else eat(TokenType::SLASH);
+          node = new BinOpNode(node, op, factor());
+      }
+      return node;
+  }
+  
+  AST* Parser::expr() {
+      AST* node = term();
+      while (currentToken.type == TokenType::PLUS || currentToken.type == TokenType::MINUS) {
+          Token op = currentToken;
+          if (op.type == TokenType::PLUS) eat(TokenType::PLUS);
+          else eat(TokenType::MINUS);
+          node = new BinOpNode(node, op, term());
+      }
+      return node;
+  }
+  
+  AST* Parser::parse() {
+      return expr();
+  }
+
 ```
