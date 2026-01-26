@@ -389,7 +389,7 @@ public:
 };
 
 //to run this in a .bas file
-//cd C:\Users\Lenovo Ryzen 5\Documents\Builing a compiler\MiniLang
+//cd [file location]
 //g++ bas_main.cpp -o basic
 //basic [bas_file_name.bas]
 
@@ -426,3 +426,4 @@ int main(int argc, char* argv[]) {
 
     return 0;
 }
+
