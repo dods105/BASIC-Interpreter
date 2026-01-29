@@ -5,7 +5,7 @@
   X = 32;
   PRINT(X)
 
-  WHILE y = 1 to 10
+  FOR y = 1 to 10
     PRINT y
     PRINT "\n"
   END
