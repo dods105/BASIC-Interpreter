@@ -2,8 +2,14 @@
 
 ### Basic Language Syntax
 ```
-  LET X = 32;
+  X = 32;
   PRINT(X)
+
+  WHILE y = 1 to 10
+    PRINT y
+    PRINT "\n"
+  END
+
 ```
 In this project, i wll be making a BASIC programming language interpreter. Using C++.
 
