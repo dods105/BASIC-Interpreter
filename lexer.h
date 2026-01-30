@@ -16,7 +16,7 @@ enum class TokenType {
     EQUAL, LPAREN, RPAREN,
     PRINT, IF, ELSE, END, WHILE, FOR, TO,
     GREATER, LESS, NOTEQ, STRICTEQ, INPUT,
-    LESSEQ, GREATEQ,
+    LESSEQ, GREATEQ, LBRACKET, RBRACKET,
     EOF_TOK
 };
 
@@ -24,7 +24,7 @@ std::string tokenNames(TokenType t){
     switch (t)
     {
         case TokenType::NUMBER: return "NUMBER";
-        case TokenType::STRING: return "STRING";;
+        case TokenType::STRING: return "STRING";
         case TokenType::IDENTIFIER: return "IDENTIFIER";
         case TokenType::PLUS: return "PLUS";
         case TokenType::MINUS: return "MINUS";
@@ -43,6 +43,8 @@ std::string tokenNames(TokenType t){
         case TokenType::LESS: return "LESS";
         case TokenType::NOTEQ: return "NOTEQ";
         case TokenType::STRICTEQ: return "STRICTEQ";
+        case TokenType::LBRACKET: return "LBRACKET";
+        case TokenType::RBRACKET: return "RBRACKET";
         case TokenType::END: return "END";
         default:
             return "UNKNOWN";
@@ -93,10 +95,10 @@ public:
         advance();
         return {TokenType::STRING, r};
     }
-
     Token identifier() {
         std::string r;
         while (isalnum(current)) {
+            std::cout << current << " Identifier" << "\n";
             r += current;
             advance();
         }
@@ -122,6 +124,16 @@ public:
             if (isdigit(current)) return number();
             if (isalpha(current)) return identifier();
             if (current == '"') return string();
+
+            if(current == '['){
+                std::cout << current << " Left" << "\n";
+                advance();
+                return {TokenType::LBRACKET, "["};
+            }
+            if(current == ']'){
+                advance();
+                return {TokenType::RBRACKET, "]"};
+            }
 
             if (current == '+') {
                 advance();

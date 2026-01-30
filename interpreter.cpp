@@ -1,17 +1,28 @@
 #include "parser.h"
 
-double getInput(){
-    double stmt;
-    std::cin >> stmt;
-    return stmt;
-}
-
 class Interpreter {
     using NodeVal = std::variant<double, std::string, bool, TokenType, int, std::vector<int>>;
     std::unordered_map<std::string, NodeVal> vars;
+    std::unordered_map<std::string, std::vector<NodeVal>> arrays;
 
 public:
     NodeVal visit(AST* n){
+
+        if(auto ar = dynamic_cast<ArrayAccessNode*>(n)){
+            double idx = std::get<double>(visit(ar->index));
+            return arrays[ar->name][idx];
+        }
+
+        if(auto ar = dynamic_cast<ArrayAssignNode*>(n)){
+            double idx = std::get<double>(visit(ar->index));
+            NodeVal v = visit(ar->value);
+            if(arrays[ar->name].size() <= idx){
+                arrays[ar->name].resize(idx+1);
+            }
+            arrays[ar->name][idx] = v;
+            return v;
+        }
+
         if(auto x = dynamic_cast<InputNode*>(n)){
             std::cout << std::get<std::string>(visit(x->text));
             std::variant<double, std::string> inputVar;
@@ -64,7 +75,7 @@ public:
                 std::cout << std::get<double>(val);
             }else{
                 str = std::get<std::string>(val);
-                if(str == "\n"){
+                if(str == "\\n"){
                     std::cout << std::endl;
                 }else{
                     std::cout << str << std::endl;
@@ -118,11 +129,22 @@ public:
 
 // ================= MAIN =================
 int main(int argc, char* argv[]) {
-    std::cout << "=== BASIC Interpreter ===\n";
+    std::cout << "=== Interpreter ===\n";
 
-    if (argc < 2) {
-        std::cerr << "Usage: interpreter <file.bas>\n";
-        return 1;
+    if (argc == 1) {
+    std::string line;
+    Interpreter interp;
+
+        while (true) {
+            std::cout << "bas> ";
+            std::getline(std::cin, line);
+            if (line == "exit") break;
+
+            Lexer lexer(line);
+            Parser parser(lexer);
+            auto ast = parser.parse();
+            interp.visit(ast);
+        }
     }
 
     std::ifstream file(argv[1]);

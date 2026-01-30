@@ -50,6 +50,20 @@ struct InputNode : AST{
     InputNode(AST* str) : text(str) {}
 };
 
+struct ArrayAccessNode : AST {
+    std::string name;
+    AST *index;
+
+    ArrayAccessNode(std::string n, AST* i) : name(n), index(i) {}
+};
+
+struct ArrayAssignNode : AST {
+    std::string name;
+    AST *index;
+    AST *value;
+    ArrayAssignNode(std::string n, AST* i, AST* v) : name(n), index(i), value(v) {}
+};
+
 // ================= PARSER =================
 class Parser {
     Lexer& l;
@@ -61,7 +75,9 @@ public:
     }
 
     void eat(TokenType t){
-        if(cur.type==t){ cur=l.getNextToken();}
+        if(cur.type==t){
+            cur=l.getNextToken();
+        }
         else{
             std::string error = "Unexpected Token: " + tokenNames(cur.type) + " Value: " + cur.value;
             throw std::runtime_error(error);
@@ -85,9 +101,18 @@ public:
             return new StringNode(v);
         }
         if(cur.type==TokenType::IDENTIFIER){
-            auto v=cur.value;
+            auto name = cur.value;
             eat(TokenType::IDENTIFIER);
-            return new VarNode(v);
+
+            if(cur.type == TokenType::LBRACKET){
+                std::cout << "Accessing. LBRACKET prob\n";
+                eat(TokenType::LBRACKET);
+                AST *index = expr();
+                eat(TokenType::RBRACKET);
+                return new ArrayAccessNode(name, index);
+            }
+
+            return new VarNode(name);
         }
         if(cur.type==TokenType::LPAREN){
             eat(TokenType::LPAREN);
@@ -137,11 +162,22 @@ public:
         }
 
         if(cur.type==TokenType::IDENTIFIER){
-            auto v = cur.value;
+            auto name = cur.value;
+
             eat(TokenType::IDENTIFIER);
+            if(cur.type == TokenType::LBRACKET){
+                std::cout << "Assigning. LBRACKET prob\n";
+                eat(TokenType::LBRACKET);
+                AST *index = expr();
+                eat(TokenType::RBRACKET);
+                eat(TokenType::EQUAL);
+
+                return new ArrayAssignNode(name, index, expr());
+            }
+
             eat(TokenType::EQUAL);
             std::cout << "Input is now Token\n";
-            return new AssignNode(v,expr());
+            return new AssignNode(name,expr());
         }
 
         if(cur.type==TokenType::IF){
