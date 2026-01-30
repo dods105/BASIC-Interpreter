@@ -86,7 +86,6 @@ public:
 
     AST* factor(){
         if (cur.type == TokenType::INPUT) {
-            std::cout << "Input\n";
             eat(TokenType::INPUT);
             return new InputNode(expr());
         }
@@ -105,7 +104,6 @@ public:
             eat(TokenType::IDENTIFIER);
 
             if(cur.type == TokenType::LBRACKET){
-                std::cout << "Accessing. LBRACKET prob\n";
                 eat(TokenType::LBRACKET);
                 AST *index = expr();
                 eat(TokenType::RBRACKET);
@@ -147,10 +145,9 @@ public:
         while(cur.type==TokenType::GREATER||cur.type==TokenType::LESS||cur.type==TokenType::STRICTEQ || cur.type == TokenType::NOTEQ
             || cur.type == TokenType::GREATEQ || cur.type == TokenType::LESSEQ
         ){
-            auto o = cur;
-            std::cout << "Cur.type is: " + tokenNames(cur.type);
+            auto operation = cur;
             eat(cur.type);
-            n=new BinOpNode(n,o,expr());
+            n=new BinOpNode(n,operation,expr());
         }
         return n;
     }
@@ -166,7 +163,6 @@ public:
 
             eat(TokenType::IDENTIFIER);
             if(cur.type == TokenType::LBRACKET){
-                std::cout << "Assigning. LBRACKET prob\n";
                 eat(TokenType::LBRACKET);
                 AST *index = expr();
                 eat(TokenType::RBRACKET);
@@ -176,18 +172,15 @@ public:
             }
 
             eat(TokenType::EQUAL);
-            std::cout << "Input is now Token\n";
             return new AssignNode(name,expr());
         }
 
         if(cur.type==TokenType::IF){
-            std::cout << "If Problem\n";
             eat(TokenType::IF);
             auto c = comparison();
             auto t = block();
             AST* e = nullptr;
             if(cur.type == TokenType::ELSE){
-                std::cout << "Else Problem\n";
                 eat(TokenType::ELSE);
                 e = block();
             }
@@ -196,11 +189,9 @@ public:
         }
 
         if(cur.type==TokenType::WHILE){
-            std::cout << "While Problem\n";
             eat(TokenType::WHILE);
             auto c=comparison();
             auto b=block();
-            std::cout << "End Problem\n";
             eat(TokenType::END);
             return new WhileNode(c,b);
         }

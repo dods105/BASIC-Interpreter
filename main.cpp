@@ -40,33 +40,33 @@ public:
             }
         }
 
-        if(auto x = dynamic_cast<NumberNode*>(n)) return x->v;
+        if(auto x = dynamic_cast<NumberNode*>(n)) return x->value;
         if(auto x = dynamic_cast<StringNode*>(n)){
-            return x->v;
+            return x->value;
         }
         if(auto x =dynamic_cast<VarNode*>(n)) return vars[x->n];
         if(auto x =dynamic_cast<AssignNode*>(n)){
-            NodeVal val = visit(x->v);
+            NodeVal val = visit(x->value);
             vars[x->n] = val;
             return val;
         }
         if(auto x =dynamic_cast<BinOpNode*>(n)){
             double a = std::get<double>(visit(x->l));
             double b = std::get<double>(visit(x->r));
-            if(x->o.type == TokenType ::PLUS){
+            if(x->op.type == TokenType ::PLUS){
                 return a+b;
             }
-            if(x->o.type == TokenType ::MINUS) {
+            if(x->op.type == TokenType ::MINUS) {
                 return a-b;
             }
-            if(x->o.type == TokenType ::STAR) return a*b;
-            if(x->o.type == TokenType ::SLASH) return a/b;
-            if(x->o.type == TokenType ::GREATER) return a > b;
-            if(x->o.type == TokenType ::LESS) return a < b;
-            if(x->o.type == TokenType::STRICTEQ) return a == b;
-            if (x->o.type == TokenType::NOTEQ) return a != b;
-            if (x->o.type == TokenType::LESSEQ) return a <= b;
-            if (x->o.type == TokenType::GREATEQ) return a >= b;
+            if(x->op.type == TokenType ::STAR) return a*b;
+            if(x->op.type == TokenType ::SLASH) return a/b;
+            if(x->op.type == TokenType ::GREATER) return a > b;
+            if(x->op.type == TokenType ::LESS) return a < b;
+            if(x->op.type == TokenType::STRICTEQ) return a == b;
+            if (x->op.type == TokenType::NOTEQ) return a != b;
+            if (x->op.type == TokenType::LESSEQ) return a <= b;
+            if (x->op.type == TokenType::GREATEQ) return a >= b;
         }
         if(auto p = dynamic_cast<PrintNode*>(n)){
             NodeVal val = visit(p->e);
@@ -91,15 +91,15 @@ public:
             }
         }
         if(auto x=dynamic_cast<IfNode*>(n)){
-            if(std::get<bool>(visit(x->c))){
-                visit(x->t);
-            }else if(x->e) {
-                visit(x->e);
+            if(std::get<bool>(visit(x->condition))){
+                visit(x->then);
+            }else if(x->else_) {
+                visit(x->else_);
             }
         }
         if(auto x = dynamic_cast<WhileNode*>(n)){
-            while(std::get<bool>(visit(x->c))){
-                visit(x->b);
+            while(std::get<bool>(visit(x->condition))){
+                visit(x->body);
             }
         }
         if(auto x = dynamic_cast<ForNode*>(n)){
@@ -111,11 +111,11 @@ public:
             double s = std::get<double>(startVal);
             double e = std::get<double>(endVal);
 
-            vars[x->v] = s;
+            vars[x->value] = s;
 
-            while(std::get<double>(vars[x->v]) <= e){
+            while(std::get<double>(vars[x->value]) <= e){
                 visit(x->body);
-                vars[x->v] = std::get<double>(vars[x->v]) + 1;
+                vars[x->value] = std::get<double>(vars[x->value]) + 1;
             }
         }
         return 0.0;
@@ -136,7 +136,7 @@ int main(int argc, char* argv[]) {
     Interpreter interp;
 
         while (true) {
-            std::cout << "bas> ";
+            std::cout << "> ";
             std::getline(std::cin, line);
             if (line == "exit") break;
 
@@ -144,6 +144,7 @@ int main(int argc, char* argv[]) {
             Parser parser(lexer);
             auto ast = parser.parse();
             interp.visit(ast);
+            std::cout << "\n";
         }
     }
 

@@ -80,7 +80,7 @@ public:
         std::string result;
         bool dotUsed = false;
 
-        while (isdigit(current) || current == '.' && !dotUsed){
+        while (isdigit(current) || (current == '.' && !dotUsed)){
             if(current == '.') {dotUsed = true;}
             result += current;
             advance();
@@ -102,7 +102,6 @@ public:
     Token identifier() {
         std::string r;
         while (isalnum(current)) {
-            std::cout << current << " Identifier" << "\n";
             r += current;
             advance();
         }
@@ -130,7 +129,6 @@ public:
             if (current == '"') return string();
 
             if(current == '['){
-                std::cout << current << " Left" << "\n";
                 advance();
                 return {TokenType::LBRACKET, "["};
             }
