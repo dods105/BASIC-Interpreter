@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"name": "BASIC-Interpreter",
+			"path": "."
+		}
+	],
+	"settings": {}
+}
