@@ -52,7 +52,6 @@ The interpreter currently has the following features:
   - If-Else statements
   - While/For loops Statements
   - Inputs (Strings and Double)
-<<<<<<< HEAD
 
 is this all the features?
 well, you can all use array indexing in here. Though, it is not an actual array. But i might add an array feature in the future. I dont know exactly when or if i will ever add one. But for now, i will set aside this and create other projects.
