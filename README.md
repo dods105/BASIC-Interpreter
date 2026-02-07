@@ -39,6 +39,8 @@ Enter a number: 3
 
 In this project, i wll be making a Psuedocode like syntax interpreter using C++.
 
+Okay, before you look at my code, do keep in mind that i am just a beginner. This is my first c++ project. I know there is a better and efficient way to write it, but i just dont know how right now. This is how i thought of writing this interpreter, so bare with me.
+
 Why C++?
 
 I've thought about using python to build this project but then python is also an interpreted language, right?  So that could mean that running an interepreted language on top
@@ -52,7 +54,6 @@ The interpreter currently has the following features:
   - If-Else statements
   - While/For loops Statements
   - Inputs (Strings and Double)
-<<<<<<< HEAD
 
 is this all the features?
 well, you can all use array indexing in here. Though, it is not an actual array. But i might add an array feature in the future. I dont know exactly when or if i will ever add one. But for now, i will set aside this and create other projects.
@@ -114,12 +115,11 @@ you can open your command line or shell or terminal and go to the dame directory
 
 
 ```
-=======
-  - Array Indexing
 
-
->>>>>>> f5256fd15dfb04e2f57efe58d5c6c9f3a8cd1990
-
-
+lesson1.md - finished
+lesson2.md - finished
+lesson3-1.md - finished
+lesson3-2.md - not finished
+lesson4.md - not finished
 
 

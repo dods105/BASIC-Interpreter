@@ -78,8 +78,7 @@ public:
 
     Token number() {
         std::string result;
-        bool dotUsed = false; 
-        
+        bool dotUsed = false;
 
         while (isdigit(current) || (current == '.' && !dotUsed)){
             if(current == '.') {dotUsed = true;}

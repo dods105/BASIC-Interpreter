@@ -167,7 +167,7 @@ in the above, the block holds two PrintNodes. One for printing the value of x an
 ```
 
 
-**IfNode** - the IfNode holds the condition, then branch(what happens if true). and the else branch. the then branch and else branch are both BlockNodes. the default value for else is nullptr. this is the case, because there are some instances where the user defines and If statement but not an else statement.
+**IfNode** - the IfNode holds the condition, then branch(what happens if true). and the else branch. the then branch and else branch are both BlockNodes. the default value for else is nullptr. this is the case, because there are some instances where the user defines an If statement but not an else statement.
 
 ```cpp
 
