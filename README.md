@@ -115,11 +115,3 @@ you can open your command line or shell or terminal and go to the dame directory
 
 
 ```
-
-lesson1.md - finished
-lesson2.md - finished
-lesson3-1.md - finished
-lesson3-2.md - not finished
-lesson4.md - not finished
-
-
